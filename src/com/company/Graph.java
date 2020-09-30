@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 public class Graph<Label> {
 
-    private class Edge {
+    class Edge {
         public int source;
         public int destination;
         public Label label;
@@ -50,7 +50,11 @@ public class Graph<Label> {
 
     }
 
+    public ArrayList<LinkedList<Edge>> getIncidency() {
+        return new ArrayList<>(incidency);
+    }
 
-
-
+    public void setIncidency(ArrayList<LinkedList<Edge>> incidency) {
+        this.incidency = incidency;
+    }
 }
