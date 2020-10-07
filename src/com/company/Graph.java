@@ -60,7 +60,7 @@ public class Graph<Label> {
     }
 
     public void setIncidency(ArrayList<LinkedList<Edge>> incidency) {
-        this.incidency = incidency;
+        this.incidency = new ArrayList<>(incidency);
     }
 
     public Set<Integer> getNeigbours(int sourceIndex) {

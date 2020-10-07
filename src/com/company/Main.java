@@ -3,6 +3,7 @@ package com.company;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -13,18 +14,19 @@ public class Main {
         pairs.add(Arrays.asList(-1 , 3));
         pairs.add(Arrays.asList(1 , 3));
         pairs.add(Arrays.asList(-2 , -3));
-        System.out.println(makeGraph(pairs));
+        Graph<String> g = makeGraph(pairs);
+//
+//        System.out.println(g);
 
-        Graph<String> g = new Graph<>(6);
 
 //        g.addArc(1 ,2, " ");
 //        g.addArc(2 ,3, " ");
 //        g.addArc(3 ,1, " ");
 //        g.addArc(2 ,4, " ");
 //        g.addArc(4 ,5, " ");
-
-//        System.out.println(g);
 //
+//        System.out.println(g);
+////
 //        System.out.println("====================");
 //        System.out.println(inverseGraph(g));
 //        System.out.println("====================");
@@ -58,7 +60,7 @@ public class Main {
     }
 
 
-    public static Graph<String> inverseGraph(Graph<String> graph) {
+    public static Graph<String> inverseGraph(Graph<String> graph) { // ToDO
         Graph<String> inversedGraph = new Graph<>(graph.order());
         inversedGraph.setIncidency(graph.getIncidency());
         for (LinkedList<Graph<String>.Edge> linkedList :inversedGraph.getIncidency()) {
@@ -77,7 +79,6 @@ public class Main {
     public static List<Set<Integer>> strongComponents(Graph<String> graph) {
         List<Set<Integer>> result = new ArrayList<>();
         List<Integer> firstIteration= depthFirstSearch(graph);
-        System.out.println(firstIteration);
         Collections.reverse(firstIteration);
         Graph<String> inversedGraph = inverseGraph(graph);
         List<Integer> visitedNodes = new ArrayList<>();
@@ -85,7 +86,9 @@ public class Main {
             if (!visitedNodes.contains(node)){
                 Set<Integer> exploredSet = new HashSet<>();
                 explore(inversedGraph,node,visitedNodes,exploredSet);
-                result.add(exploredSet);
+                result.add(exploredSet.stream()
+                        .map(integer -> indexToIntLabel(integer,graph.order()))
+                        .collect(Collectors.toSet())); // converting indexes to labels
             }
 
         }
@@ -111,5 +114,17 @@ public class Main {
             if(!visitedNodes.contains(node))
                 explore(g,node, visitedNodes,exploredNodes);
         }
+    }
+
+
+    public static boolean isSatisfiableFormula (List<List<Integer>> pairs){
+        Graph<String> g = makeGraph(pairs);
+        for (Set<Integer> strongComponent : strongComponents(g) ){
+            for (Integer node : strongComponent ){
+                if (strongComponent.contains(Math.negateExact(node)))
+                    return false;
+            }
+        }
+        return true;
     }
 }
