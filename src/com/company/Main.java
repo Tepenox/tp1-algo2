@@ -60,7 +60,7 @@ public class Main {
     }
 
 
-    public static Graph<String> inverseGraph(Graph<String> graph) { // ToDO
+    public static void inverseGraph(Graph<String> graph) { // ToDO
         Graph<String> inversedGraph = new Graph<>(graph.order());
         inversedGraph.setIncidency(graph.getIncidency());
         for (LinkedList<Graph<String>.Edge> linkedList :inversedGraph.getIncidency()) {
@@ -73,19 +73,18 @@ public class Main {
             }
             ;
         }
-        return inversedGraph;
     }
 
     public static List<Set<Integer>> strongComponents(Graph<String> graph) {
         List<Set<Integer>> result = new ArrayList<>();
         List<Integer> firstIteration= depthFirstSearch(graph);
         Collections.reverse(firstIteration);
-        Graph<String> inversedGraph = inverseGraph(graph);
+        inverseGraph(graph);
         List<Integer> visitedNodes = new ArrayList<>();
         for (Integer node : firstIteration){ // firstIteration is inversed here
             if (!visitedNodes.contains(node)){
                 Set<Integer> exploredSet = new HashSet<>();
-                explore(inversedGraph,node,visitedNodes,exploredSet);
+                explore(graph,node,visitedNodes,exploredSet);
                 result.add(exploredSet.stream()
                         .map(integer -> indexToIntLabel(integer,graph.order()))
                         .collect(Collectors.toSet())); // converting indexes to labels
