@@ -6,15 +6,34 @@ import java.util.function.Function;
 
 public class Main {
 
+
     public static void main(String[] args) {
-        List<List<Integer>> pairs =  new ArrayList<>();
-        pairs.add(Arrays.asList(1 , -2));
-        pairs.add(Arrays.asList(-1 , 3));
-        pairs.add(Arrays.asList(1 , 3));
-        pairs.add(Arrays.asList(-2 , -3));
-        System.out.println(makeGraph(pairs));
-        System.out.println("------------------------------INVERSED GRAPH-----------------");
-        System.out.println(inverseGraph(makeGraph(pairs)));
+//        List<List<Integer>> pairs =  new ArrayList<>();
+//        pairs.add(Arrays.asList(1 , -2));
+//        pairs.add(Arrays.asList(-1 , 3));
+//        pairs.add(Arrays.asList(1 , 3));
+//        pairs.add(Arrays.asList(-2 , -3));
+//        System.out.println(makeGraph(pairs));
+
+        Graph<String> g = new Graph<>(6);
+
+        g.addArc(1 ,2, " ");
+        g.addArc(2 ,3, " ");
+        g.addArc(3 ,1, " ");
+        g.addArc(2 ,4, " ");
+        g.addArc(4 ,5, " ");
+
+        System.out.println(g);
+
+        System.out.println("====================");
+        System.out.println(inverseGraph(g));
+        System.out.println("====================");
+        System.out.println(g);
+
+
+        strongComponents(g).forEach(System.out::println);
+
+
     }
 
     public static Graph<String> makeGraph(List<List<Integer>> pairs) {
@@ -56,6 +75,39 @@ public class Main {
     }
 
     public static List<Set<Integer>> strongComponents(Graph<String> graph) {
-        return null;
+        List<Set<Integer>> result = new ArrayList<>();
+        List<Integer> firstIteration= depthFirstSearch(graph);
+        Collections.reverse(firstIteration);
+        Graph<String> inversedGraph = inverseGraph(graph);
+        List<Integer> exploredNodes = new ArrayList<>();
+        for (Integer node : firstIteration){ // firstIteration is inversed here
+            if (!exploredNodes.contains(node)){
+                result.add(explore(inversedGraph,node,exploredNodes));
+            }
+
+        }
+
+
+        return result;
+    }
+
+    public static List<Integer> depthFirstSearch(Graph<String> g){
+        List<Integer> visitedNodes = new ArrayList<>(); // stores all previously visited nodes in graph
+        for (Integer node : g.getNodes()) {
+            if (!visitedNodes.contains(node))
+                explore(g,node,visitedNodes);
+        }
+        return visitedNodes;
+    }
+
+    public static Set<Integer> explore(Graph<String> g, Integer s, List<Integer> visitedNodes){
+        Set<Integer> exploredNodes = new HashSet<>(); //stores explored node from s
+        exploredNodes.add(s);
+        visitedNodes.add(s);
+        for (Integer node : g.getNeigbours(s)){
+            if(!visitedNodes.contains(node))
+                explore(g,node, visitedNodes);
+        }
+    return exploredNodes;
     }
 }

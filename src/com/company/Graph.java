@@ -1,9 +1,12 @@
 package com.company;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Graph<Label> {
+
+    public Set<Integer> nodes = new HashSet<>();
+
+
 
     class Edge {
         public int source;
@@ -23,8 +26,8 @@ public class Graph<Label> {
 
     public Graph(int size) {
         cardinal = size;
-        incidency = new ArrayList<LinkedList<Edge>>(size+1);
-        for (int i = 0;i<cardinal;i++) {
+        incidency = new ArrayList<LinkedList<Edge>>(size + 1);
+        for (int i = 0; i < cardinal; i++) {
             incidency.add(i, new LinkedList<Edge>());
         }
     }
@@ -34,13 +37,15 @@ public class Graph<Label> {
     }
 
     public void addArc(int source, int dest, Label label) {
-        incidency.get(source).addLast(new Edge(source,dest,label));
+        nodes.add(source);
+        nodes.add(dest);
+        incidency.get(source).addLast(new Edge(source, dest, label));
     }
 
     public String toString() {
         String result = new String("");
         result = result.concat(cardinal + "\n");
-        for (int i = 0; i<cardinal;i++) {
+        for (int i = 0; i < cardinal; i++) {
             for (Edge e : incidency.get(i)) {
                 result = result.concat(e.source + " " + e.destination + " "
                         + e.label.toString() + "\n");
@@ -57,4 +62,20 @@ public class Graph<Label> {
     public void setIncidency(ArrayList<LinkedList<Edge>> incidency) {
         this.incidency = incidency;
     }
+
+    public Set<Integer> getNeigbours(int sourceIndex) {
+        Set<Integer> neigbors = new HashSet<>();
+
+            for (Graph.Edge edge : incidency.get(sourceIndex)) {
+                neigbors.add(edge.destination);
+        }
+        return neigbors;
+    }
+
+    public Set<Integer> getNodes() {
+        return new HashSet<>(nodes);
+    }
 }
+
+
+
