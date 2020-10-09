@@ -1,58 +1,29 @@
 package com.company;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
 
-    public static void main(String[] args) {
-        List<List<Integer>> pairs =  new ArrayList<>();
-        /*
-        pairs.add(Arrays.asList(1 , 2));
-        pairs.add(Arrays.asList(3 , 4));
-        pairs.add(Arrays.asList(5 , 6));
-        pairs.add(Arrays.asList(7 , 8));
-        pairs.add(Arrays.asList(9 , 10));
-        pairs.add(Arrays.asList(-1 , -2));
-        pairs.add(Arrays.asList(-1 , -4));
-        pairs.add(Arrays.asList(-2 , -4));
-        pairs.add(Arrays.asList(-3, -4));
-        pairs.add(Arrays.asList(-4 , -5));
-        pairs.add(Arrays.asList(-4 , -6));
-        pairs.add(Arrays.asList(-5 , -6));
-        pairs.add(Arrays.asList(-5 , -9));
-        pairs.add(Arrays.asList(-6 , -7));
-        pairs.add(Arrays.asList(-6 , -10));
-        pairs.add(Arrays.asList(-7 , -8));
-        pairs.add(Arrays.asList(-7 , -10));
-        pairs.add(Arrays.asList(-8 , -10));*/
+    public static void main(String[] args) throws IOException {
 
-        //Graph<String> g = makeGraph(pairs);
-//
-//        System.out.println(g);
+        Reader reader = new Reader("URL");
+        // ex : C:\Users\Cédric\IdeaProjects\tp1-algo2\src\com\company\formule.txt
+        //System.out.println("taille de la formule : " + reader.getSize());
+        //System.out.println("nombre de clauses : " + reader.getclose());
+        //System.out.println("ensemble de clauses :" + reader.getList());
+        List<List<Integer>> pairs =  reader.getList();
 
-        Graph<String> g = new Graph<>(6);
-        g.addArc(1 ,2, " ");
-        g.addArc(2 ,3, " ");
-        g.addArc(3 ,1, " ");
-        g.addArc(2 ,4, " ");
-        g.addArc(4 ,5, " ");
+        Graph<String> g = makeGraph(pairs,reader.getSize());
 
-        System.out.println(g);
-//
-////
-//        System.out.println("====================");
-//        System.out.println(inverseGraph(g));
-//        System.out.println("====================");
-//        System.out.println(g);
         strongComponents(g).forEach(System.out::println);
-        //System.out.println(isSatisfiableFormula(pairs));
-
-
+        System.out.println(isSatisfiableFormula(pairs,reader.getSize()));
     }
 
-    public static Graph<String> makeGraph(List<List<Integer>> pairs) {
-        Graph<String> graph = new Graph<>(6);
+    public static Graph<String> makeGraph(List<List<Integer>> pairs, int size) {
+        Graph<String> graph = new Graph<>(size);
         int graphOrder = graph.order();
         for (List<Integer> pair : pairs) {
             graph.addArc(intLabelToIndex(Math.negateExact(pair.get(0)), graphOrder) , intLabelToIndex(pair.get(1), graphOrder)
@@ -83,16 +54,13 @@ public class Main {
         List<Set<Integer>> result = new ArrayList<>();
         List<Integer> firstIteration= depthFirstSearch(graph);
         Collections.reverse(firstIteration);
-        System.out.println("inverted");
         inverseGraph(graph);
         List<Integer> visitedNodes = new ArrayList<>();
         for (Integer node : firstIteration){ // firstIteration is inversed here
             if (!visitedNodes.contains(node)){
                 Set<Integer> exploredSet = new HashSet<>();
                 explore(graph,node,visitedNodes,exploredSet);
-                //System.out.println("adding in final result : "+exploredSet);
-                result.add(exploredSet);
-                        /*.stream()
+                result.add(exploredSet.stream()
                         .map(integer -> indexToIntLabel(integer,graph.order()))
                         .collect(Collectors.toSet())); // converting indexes to labels*/
             }
@@ -120,8 +88,8 @@ public class Main {
     }
 
 
-    public static boolean isSatisfiableFormula (List<List<Integer>> pairs){
-        Graph<String> g = makeGraph(pairs);
+    public static boolean isSatisfiableFormula (List<List<Integer>> pairs,int order){
+        Graph<String> g = makeGraph(pairs,order);
         for (Set<Integer> strongComponent : strongComponents(g) ){
             for (Integer node : strongComponent ){
                 if (strongComponent.contains(Math.negateExact(node)))
