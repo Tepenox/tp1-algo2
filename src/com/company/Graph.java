@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Graph<Label> {
 
@@ -56,7 +57,7 @@ public class Graph<Label> {
     }
 
     public ArrayList<LinkedList<Edge>> getIncidency() {
-        return new ArrayList<>(incidency);
+        return new ArrayList<>(new LinkedList<>(incidency));
     }
 
     public void setIncidency(ArrayList<LinkedList<Edge>> incidency) {
@@ -64,16 +65,29 @@ public class Graph<Label> {
     }
 
     public Set<Integer> getNeigbours(int sourceIndex) {
-        Set<Integer> neigbors = new HashSet<>();
-
-            for (Graph.Edge edge : incidency.get(sourceIndex)) {
-                neigbors.add(edge.destination);
+        Set<Integer> neigbours = new HashSet<>();
+        for (Graph.Edge edge : incidency.get(sourceIndex)) {
+            neigbours.add(edge.destination);
         }
-        return neigbors;
+        return neigbours;
     }
 
     public Set<Integer> getNodes() {
         return new HashSet<>(nodes);
+    }
+
+    public void reverseIncidency(){
+        ArrayList<LinkedList<Edge>> newIncidency = new ArrayList<LinkedList<Edge>>(order());
+        for (int i = 0; i < cardinal; i++) {
+            newIncidency.add(i, new LinkedList<Edge>());//init
+        }
+        for (LinkedList<Edge> linkedList: incidency) {
+            for (Edge edge:linkedList) {
+                Edge newEdge = new Edge(edge.destination,edge.source,null);
+                newIncidency.get(newEdge.source).addLast(newEdge);
+            }
+        }
+        incidency = newIncidency;
     }
 }
 

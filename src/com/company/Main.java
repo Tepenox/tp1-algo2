@@ -1,39 +1,52 @@
 package com.company;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Main {
 
 
     public static void main(String[] args) {
         List<List<Integer>> pairs =  new ArrayList<>();
-        pairs.add(Arrays.asList(1 , -2));
-        pairs.add(Arrays.asList(-1 , 3));
-        pairs.add(Arrays.asList(1 , 3));
-        pairs.add(Arrays.asList(-2 , -3));
-        Graph<String> g = makeGraph(pairs);
+        /*
+        pairs.add(Arrays.asList(1 , 2));
+        pairs.add(Arrays.asList(3 , 4));
+        pairs.add(Arrays.asList(5 , 6));
+        pairs.add(Arrays.asList(7 , 8));
+        pairs.add(Arrays.asList(9 , 10));
+        pairs.add(Arrays.asList(-1 , -2));
+        pairs.add(Arrays.asList(-1 , -4));
+        pairs.add(Arrays.asList(-2 , -4));
+        pairs.add(Arrays.asList(-3, -4));
+        pairs.add(Arrays.asList(-4 , -5));
+        pairs.add(Arrays.asList(-4 , -6));
+        pairs.add(Arrays.asList(-5 , -6));
+        pairs.add(Arrays.asList(-5 , -9));
+        pairs.add(Arrays.asList(-6 , -7));
+        pairs.add(Arrays.asList(-6 , -10));
+        pairs.add(Arrays.asList(-7 , -8));
+        pairs.add(Arrays.asList(-7 , -10));
+        pairs.add(Arrays.asList(-8 , -10));*/
+
+        //Graph<String> g = makeGraph(pairs);
 //
 //        System.out.println(g);
 
+        Graph<String> g = new Graph<>(6);
+        g.addArc(1 ,2, " ");
+        g.addArc(2 ,3, " ");
+        g.addArc(3 ,1, " ");
+        g.addArc(2 ,4, " ");
+        g.addArc(4 ,5, " ");
 
-//        g.addArc(1 ,2, " ");
-//        g.addArc(2 ,3, " ");
-//        g.addArc(3 ,1, " ");
-//        g.addArc(2 ,4, " ");
-//        g.addArc(4 ,5, " ");
+        System.out.println(g);
 //
-//        System.out.println(g);
 ////
 //        System.out.println("====================");
 //        System.out.println(inverseGraph(g));
 //        System.out.println("====================");
 //        System.out.println(g);
-
-
         strongComponents(g).forEach(System.out::println);
+        //System.out.println(isSatisfiableFormula(pairs));
 
 
     }
@@ -63,56 +76,47 @@ public class Main {
     public static void inverseGraph(Graph<String> graph) { // ToDO
         Graph<String> inversedGraph = new Graph<>(graph.order());
         inversedGraph.setIncidency(graph.getIncidency());
-        for (LinkedList<Graph<String>.Edge> linkedList :inversedGraph.getIncidency()) {
-            for (Graph.Edge edge : linkedList) {
-                int tmp = edge.source;
-                edge.source = edge.destination;
-                edge.destination = tmp;
-                edge.label = indexToIntLabel(edge.source , inversedGraph.order()) + "->"
-                        + indexToIntLabel(edge.destination , inversedGraph.order());
-            }
-            ;
-        }
+        graph.reverseIncidency();
     }
 
     public static List<Set<Integer>> strongComponents(Graph<String> graph) {
         List<Set<Integer>> result = new ArrayList<>();
         List<Integer> firstIteration= depthFirstSearch(graph);
         Collections.reverse(firstIteration);
+        System.out.println("inverted");
         inverseGraph(graph);
         List<Integer> visitedNodes = new ArrayList<>();
         for (Integer node : firstIteration){ // firstIteration is inversed here
             if (!visitedNodes.contains(node)){
                 Set<Integer> exploredSet = new HashSet<>();
                 explore(graph,node,visitedNodes,exploredSet);
-                result.add(exploredSet.stream()
+                //System.out.println("adding in final result : "+exploredSet);
+                result.add(exploredSet);
+                        /*.stream()
                         .map(integer -> indexToIntLabel(integer,graph.order()))
-                        .collect(Collectors.toSet())); // converting indexes to labels
+                        .collect(Collectors.toSet())); // converting indexes to labels*/
             }
-
         }
-
-
-        return result;
+        return result;//work gg wineuh
     }
 
     public static List<Integer> depthFirstSearch(Graph<String> g){
-        List<Integer> visitedNodes = new ArrayList<>(); // stores all previously visited nodes in graph
+        List<Integer> exploredNodes = new ArrayList<>();
         for (Integer node : g.getNodes()) {
-            if (!visitedNodes.contains(node))
-                explore(g,node,visitedNodes, new HashSet<>()); // we dont  need explored Set here
+            if (!exploredNodes.contains(node))
+                explore(g,node,exploredNodes, new HashSet<>());
         }
-        return visitedNodes;
+        return exploredNodes;
     }
 
-    public static void explore(Graph<String> g, Integer s, List<Integer> visitedNodes
-            , Set<Integer> exploredNodes ){//stores explored node from s
-        exploredNodes.add(s);
-        visitedNodes.add(s);
+    public static void explore(Graph<String> g, Integer s, List<Integer> exploredNodes
+            , Set<Integer> visitedNodes ){
+        visitedNodes.add(s);//we'v visited this node, not explored yet (avoid overflow from cycle ex:{1->2->3->1})
         for (Integer node : g.getNeigbours(s)){
-            if(!visitedNodes.contains(node))
-                explore(g,node, visitedNodes,exploredNodes);
+            if(!exploredNodes.contains(node) && !visitedNodes.contains(node))
+                explore(g,node, exploredNodes,visitedNodes);
         }
+        exploredNodes.add(s);//we'v succesfully explored all neigbours of this node
     }
 
 
