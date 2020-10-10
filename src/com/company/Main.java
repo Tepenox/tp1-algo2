@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        Reader reader = new Reader("URL");
+        Reader reader = new Reader("");
         // ex : C:\Users\Cédric\IdeaProjects\tp1-algo2\src\com\company\formule.txt
         //System.out.println("taille de la formule : " + reader.getSize());
         //System.out.println("nombre de clauses : " + reader.getclose());
@@ -17,9 +17,10 @@ public class Main {
         List<List<Integer>> pairs =  reader.getList();
 
         Graph<String> g = makeGraph(pairs,reader.getSize());
+        //System.out.println(g);
 
-        strongComponents(g).forEach(System.out::println);
-        System.out.println(isSatisfiableFormula(pairs,reader.getSize()));
+        //strongComponents(g).forEach(System.out::println);
+        //System.out.println(isSatisfiableFormula(pairs,reader.getSize()));
     }
 
     public static Graph<String> makeGraph(List<List<Integer>> pairs, int size) {
@@ -44,7 +45,7 @@ public class Main {
     }
 
 
-    public static void inverseGraph(Graph<String> graph) { // ToDO
+    public static void inverseGraph(Graph<String> graph) {
         Graph<String> inversedGraph = new Graph<>(graph.order());
         inversedGraph.setIncidency(graph.getIncidency());
         graph.reverseIncidency();
@@ -65,7 +66,7 @@ public class Main {
                         .collect(Collectors.toSet())); // converting indexes to labels*/
             }
         }
-        return result;//work gg wineuh
+        return result;
     }
 
     public static List<Integer> depthFirstSearch(Graph<String> g){

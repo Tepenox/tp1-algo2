@@ -8,7 +8,7 @@ public class Reader {
     private String URL;
 
     /*
-    * Ce Reader fonctionne pour des formules d'un taille <50 ((taille*2)<100)
+    * Ce Reader fonctionne pour des formules d'un taille < 100
     * De plus les littéraux des clauses ne doivent pas être supérieur à 99
     * Le nombre de clauses doit être lui aussi sur deux chiffres
     *
